@@ -10,16 +10,28 @@ let getTopics = async () => {
       let urlObj=[];
       
       let comments = await models.comments.findAll({ where: { topicId:item.id} })
-      var i=0;
-      for(comment_index in comments.slice(0,5)){
-        const comment_item = comments[comment_index];
-        console.log(">>>>>>>>>>>",comment_index);
-        let users = await models.users.findAll({ where: { id:comment_item.userId} })
-        console.log("<<<<<<<<<",users );
-          let imageObj={
-            "url":users[0].profileImage
-          }
-          urlObj.push(imageObj);
+      // var i=0;
+      // for(comment_index in comments.slice(0,5)){
+      //   const comment_item = comments[comment_index];
+      //   console.log(">>>>>>>>>>>",comment_index);
+      //   let users = await models.users.findAll({ where: { id:comment_item.userId} })
+      //   console.log("<<<<<<<<<",users );
+      //     let imageObj={
+      //       "url":users[0].profileImage
+      //     }
+      //     urlObj.push(imageObj);
+      // }
+
+      let likes = await models.likes.findAll({where:{topicId:item.id}})
+      likeNo=likes.length
+      for(like_index in likes){
+        const likeItem=likes[like_index]
+        let users = await models.users.findAll({where:{id:likeItem.userId}})
+            let imageObj={
+              "url":users[0].profileImage
+            }
+            urlObj.push(imageObj);
+            // console.log("imageObj",imageObj);
       }
         
       let itemObj = {
@@ -28,6 +40,7 @@ let getTopics = async () => {
         "category":item.category,
         "viewCount":item.viewCount,
         "likes":item.likes,
+        "likes":0,
         "comments": comments.length,
         "createdAt":item.createdAt,
         "likes":item.likes,
@@ -43,6 +56,7 @@ let getTopics = async () => {
 //
 let getTopic = async (topic_id) => {
   const respObject = []
+  let isLiked=false
     let topic = await models.topics.findAll({where:{id:topic_id}})
     const item=topic[0];
     console.log("%555555555555",item.id)
@@ -59,7 +73,7 @@ let getTopic = async (topic_id) => {
       const user_item = user[0];
       
       let commentItemObj = {
-        
+        "id":comment_item.id,
         "username": user_item.username,
         "url":user_item.profileImage,
         "content":comment_item.content,
@@ -67,7 +81,22 @@ let getTopic = async (topic_id) => {
       }
       commentObj.push(commentItemObj)
     }
-    // console.log("user id is", item.userId, item.userid)
+    console.log("islikes11",isLiked)
+
+    let likes= await models.likes.findAll({where:{topicId:topic_id}})
+    console.log("likes",likes)
+    // console.log("islikes1",isLiked)
+    const likeItem=likes[0];
+    if(likes!=0){
+      isLiked=true;
+      console.log("islikes2",isLiked)
+
+    }
+    else{
+      isLiked=false;
+      console.log("islikes3",isLiked)
+    }
+    console.log("user id is", item.userId, item.userid)
     let user = await models.users.findAll({where:{id:item.userid}})
     console.log("^^^^^^^^^^^",user[0].profileImage);
     let itemObj = {
@@ -79,7 +108,7 @@ let getTopic = async (topic_id) => {
       "category":item.category,
       "likes":item.likes,
       "createdAt":item.createdAt,
-      "likes":item.likes,
+      "isLiked":isLiked,
       "replyCount":commentObj.length,
       "viewCount":item.viewCount,
       "userCount":1,
@@ -98,7 +127,6 @@ router.get('/', function(request, response) {
    })
 })
 
-
 router.get('/:topic_id', function(request, response) {  
   models.topics.increment("viewCount",
    {
@@ -108,8 +136,7 @@ router.get('/:topic_id', function(request, response) {
   getTopic(request.params.topic_id).then(respObject => {
     response.json({topic:respObject})
   })
-  // models.topics.findByPk(request.params.topic_id)
-  // .then((topic)=>response.json({topic}))
+  .catch(err => response.status(400).json({ err: `Topic [${request.params.topic_id}] doesn\'t exist.`}))
 });
 
 router.post("/",function(request,response){ 
@@ -119,7 +146,8 @@ router.post("/",function(request,response){
       category:request.body.category,
       content:request.body.content,
       userId:2,
-      viewCount:0
+      viewCount:0,
+      likes:0
   }).then(function() {
     // response.redirect("http://localhost:3001/");
     response.send("Successful");
@@ -199,6 +227,7 @@ router.post("/:topic_id/comments",function(request,response){
         // else response.json(user_d);
         response.send("Successful");
 
+        Resolution
       });
   });
 
@@ -217,7 +246,10 @@ router.post("/:topic_id/comments",function(request,response){
         topicId:request.params.topic_id,
         userId:1
     }).then(function() {
-      response.send("Successful");
+      response.send("Successful liked");
+      // models.topics.update({
+      //   likes:topics.likes+1
+      // })
     }); 
   });
 
@@ -227,8 +259,10 @@ router.post("/:topic_id/comments",function(request,response){
         where: {topicId:request.params.topic_id}
       })
       .then(function(user_d) {
-        response.send("Successful");
-
+          response.send("Successful unliked");
+        //   models.topics.update({
+        //   likes:topics.likes-1
+        // })
       });
   });  
 

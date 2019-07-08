@@ -227,7 +227,6 @@ router.post("/:topic_id/comments",function(request,response){
         // else response.json(user_d);
         response.send("Successful");
 
-        Resolution
       });
   });
 
@@ -244,7 +243,7 @@ router.post("/:topic_id/comments",function(request,response){
   router.post("/:topic_id/likes",function(request,response){ 
     models.likes.create({
         topicId:request.params.topic_id,
-        userId:1
+        userId:4
     }).then(function() {
       response.send("Successful liked");
       // models.topics.update({

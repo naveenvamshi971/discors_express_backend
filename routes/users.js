@@ -9,16 +9,16 @@ router.get("/", function(request, response) {
 });
 
 router.post("/", function(request, response) {
-  console.log("######",request.body)
+  console.log("######",request.body.user)
   models.users
     .create({
-      username: request.body.username,
-      password: request.body.password,
-      email: request.body.email,
-      profileImage: "https://www.flaticon.com/premium-icon/icons/svg/145/145863.svg"
+      username: request.body.user.username,
+      password: request.body.user.password,
+      email: request.body.user.email,
+      profileImage: "https://image.flaticon.com/icons/svg/145/145846.svg"
     })
     .then(function() {
-      // response.send("Successful");
+      response.send("Successful");
       // response.redirect("http://localhost:3001/");
       // response.redirect("Successful");
     });

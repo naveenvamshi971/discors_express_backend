@@ -7,7 +7,7 @@ var op=Sequelize.Op
 
 
 router.post('/session', function(request, response) {
-  console.log("****",request.body)
+  // console.log("****",request.body)
   models.users.findAll({
     where:{
       [op.or]:[{email:request.body.user.email,password:request.body.user.password},{username:request.body.user.email,password:request.body.user.password}]}

@@ -9,7 +9,7 @@ router.get("/", function(request, response) {
 });
 
 router.post("/", function(request, response) {
-  console.log("######",request.body.user)
+  // console.log("######",request.body.user)
   models.users
     .create({
       username: request.body.user.username,
@@ -25,7 +25,7 @@ router.post("/", function(request, response) {
 });
 
 router.patch("/", function(request, response) {
-  console.log(request.body.user.image);
+  // console.log(request.body.user.image);
   models.users
     .update(
       {

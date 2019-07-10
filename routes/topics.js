@@ -59,9 +59,9 @@ let getTopic = async (topic_id) => {
   let isLiked=false
     let topic = await models.topics.findAll({where:{id:topic_id}})
     const item=topic[0];
-    console.log("%555555555555",item.id)
-    console.log("%555555555556",item.userid)
-    console.log("%555555555557",item.name)
+    // console.log("%555555555555",item.id)
+    // console.log("%555555555556",item.userid)
+    // console.log("%555555555557",item.name)
     // return null;  
     let commentObj=[];
     // console.log("*****Item******",item);
@@ -81,24 +81,24 @@ let getTopic = async (topic_id) => {
       }
       commentObj.push(commentItemObj)
     }
-    console.log("islikes11",isLiked)
+    // console.log("islikes11",isLiked)
 
     let likes= await models.likes.findAll({where:{topicId:topic_id}})
-    console.log("likes",likes)
+    // console.log("likes",likes)
     // console.log("islikes1",isLiked)
     const likeItem=likes[0];
     if(likes!=0){
       isLiked=true;
-      console.log("islikes2",isLiked)
+      // console.log("islikes2",isLiked)
 
     }
     else{
       isLiked=false;
-      console.log("islikes3",isLiked)
+      // console.log("islikes3",isLiked)
     }
-    console.log("user id is", item.userId, item.userid)
+    // console.log("user id is", item.userId, item.userid)
     let user = await models.users.findAll({where:{id:item.userid}})
-    console.log("^^^^^^^^^^^",user[0].profileImage);
+    // console.log("^^^^^^^^^^^",user[0].profileImage);
     let itemObj = {
       "id":item.id,
       "username":user[0].username,
@@ -140,7 +140,7 @@ router.get('/:topic_id', function(request, response) {
 });
 
 router.post("/",function(request,response){ 
-  console.log("#333333",request.body); 
+  // console.log("#333333",request.body); 
   models.topics.create({
       name:request.body.title,
       category:request.body.category,
@@ -156,7 +156,7 @@ router.post("/",function(request,response){
 });
 
 router.post("/:topic_id/comments",function(request,response){ 
-  console.log("))))))))))))))))",request.body.comment,request.params);
+  // console.log("))))))))))))))))",request.body.comment,request.params);
     models.comments.create({
         content:request.body.comment.content,
         topicId:request.params.topic_id,
